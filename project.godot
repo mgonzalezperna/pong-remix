@@ -16,6 +16,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Pong-remix"
+run/main_scene="res://scenes/scene-base.tscn"
 config/icon="res://icon.png"
 
 [rendering]
