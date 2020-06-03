@@ -60,6 +60,7 @@ position = Vector2( -6.10352e-05, -16 )
 position = Vector2( 96, 296 )
 collision_layer = 2
 collision_mask = 5
+mode = 2
 physics_material_override = SubResource( 2 )
 gravity_scale = 0.0
 custom_integrator = true
