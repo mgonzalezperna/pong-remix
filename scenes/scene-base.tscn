@@ -96,6 +96,7 @@ linear_velocity = Vector2( 200, 200 )
 linear_damp = 0.0
 angular_damp = 0.0
 script = ExtResource( 4 )
+paddle_angle_override = 0.5
 
 [node name="Sprite" type="Sprite" parent="ball"]
 scale = Vector2( 0.5, 0.5 )

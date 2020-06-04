@@ -1,6 +1,7 @@
 extends RigidBody2D
 
 var screen_size
+export(float, 0, 1) var paddle_angle_override = 0.5
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -26,7 +27,7 @@ func _process(delta):
 	for body in collition_bodies:
 		if body.get_name() in ["paddle_player1", "paddle_player2"]:
 			var hit_vector = body.position.direction_to(self.position)
-			var rotation = self.linear_velocity.angle_to(hit_vector) / 2
+			var rotation = self.linear_velocity.angle_to(hit_vector) * paddle_angle_override
 			print('hit_angle ', hit_vector.angle())
 			print('linear_velocity ', self.linear_velocity.angle())
 			print('rotation ', rotation)
