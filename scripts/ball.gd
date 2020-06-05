@@ -1,8 +1,11 @@
 extends RigidBody2D
 
+var rng = RandomNumberGenerator.new()
 var screen_size
 export(float, 0, 1) var paddle_angle_override = 0.5
 export(int, 0, 180) var max_rotation_override = 45
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	screen_size = get_viewport_rect().size
@@ -25,6 +28,7 @@ func ball_state_on_screen(state):
 func _process(delta):
 	var collition_bodies = get_colliding_bodies()
 	for body in collition_bodies:
+		var audio_type = "../audio_wall"
 		if body.get_name() in ["paddle_player1", "paddle_player2"]:
 			# var shape = get_node(NodePath("../" + body.get_name() + "/CollisionShape2D")).get_shape()
 			var paddleOffset = body.get_name() == "paddle_player1" if -40 else 40
@@ -33,3 +37,7 @@ func _process(delta):
 			print('rotation ', rad2deg(rotation))
 			rotation = clamp(rotation, -deg2rad(max_rotation_override), deg2rad(max_rotation_override))
 			self.linear_velocity = self.linear_velocity.rotated(rotation)
+			audio_type = "../audio_paddle"
+		var audio: AudioStreamPlayer = get_node(audio_type)
+		audio.set_pitch_scale(rng.randf_range(0.6, 1.4))
+		audio.play()
