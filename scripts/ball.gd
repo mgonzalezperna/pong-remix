@@ -1,7 +1,7 @@
 extends RigidBody2D
 
 var screen_size
-
+export var key_power_up = "ui_power_up"
 # Called when the node enters the scene tree for the first time.
 func _ready():
     screen_size = get_viewport_rect().size
@@ -25,7 +25,10 @@ func _physics_process(delta):
     var collition_bodies = get_colliding_bodies()
     for body in collition_bodies:
         if body.get_name() in ["paddle_player1", "paddle_player2"]:
-            if body.position.x != self.position.x:
+            if Input.is_action_pressed(key_power_up):
+                var arrow_rotation = get_node("../" + body.get_name() + "/arrow").rotation + body.rotation
+                self.linear_velocity = Vector2.UP.rotated(arrow_rotation) * 360
+            elif body.position.x != self.position.x:
                 var impulse_x = body.get_velocity().x
                 var impulse_y = body.get_velocity().y
                 self.apply_central_impulse(Vector2(body.get_velocity()))

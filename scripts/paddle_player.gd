@@ -8,26 +8,22 @@ export var key_power_up = "ui_power_up"
 var screen_size
 var velocity
 
-const Arrow = preload("../scenes/arrow.tscn")
-var arrow = null
+onready var arrow = $arrow
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
     screen_size = get_viewport_rect().size
-    print(screen_size)
-    arrow = Arrow.instance()
-    add_child(arrow)
-    arrow.hide()
-
+    arrow.show()
+    
 func get_velocity():
     return velocity
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
     var timescale = process_slowmo()
-    Engine.time_scale = timescale
+    Engine.time_scale = timescale.engine
     if not process_powerup():
-        velocity = get_movement_velocity(timescale)
+        velocity = get_movement_velocity(timescale.paddle)
     else:
         pass
     #position += velocity * delta
@@ -35,20 +31,23 @@ func _process(delta):
     move_and_collide(velocity * delta)
 
 func process_slowmo():
-    var timescale = 1
     if Input.is_action_pressed(key_slowmo):
-        timescale = 0.3
+         return {"engine": 0.3, "paddle": 2}
 
-    return timescale
+    return {"engine": 1, "paddle": 1}
 
 func process_powerup():
-    arrow.hide()
-    if Input.is_action_pressed(key_power_up):
-        arrow.show()
+#    if Input.is_action_pressed(key_power_up):
+#        arrow.show()
+#    else:
+#        arrow.hide()
+    pass
 
 func get_movement_velocity(timescale):
     var velocity = Vector2()  # The player's movement vector.
-    var paddle_speed = speed / timescale
+    var paddle_speed = speed * timescale
+    if Input.is_action_pressed(key_power_up):
+        return velocity
     if Input.is_action_pressed(key_down):
         velocity.y += 1
     if Input.is_action_pressed(key_up):
