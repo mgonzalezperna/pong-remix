@@ -7,23 +7,5 @@
 script = ExtResource( 2 )
 
 [node name="ArrowBeam" parent="." instance=ExtResource( 3 )]
-cast_speed = 0.8
+cast_speed = 0.1
 growth_time = 0.2
-
-[node name="ArrowBeamLeft" parent="." instance=ExtResource( 3 )]
-position = Vector2( 0, -300 )
-rotation = 2.35619
-cast_speed = 0.5
-max_length = 150
-growth_time = 0.2
-inverted = true
-delay = 0.8
-
-[node name="ArrowBeamRight" parent="." instance=ExtResource( 3 )]
-position = Vector2( 0, -300 )
-rotation = 0.785398
-cast_speed = 0.5
-max_length = 150
-growth_time = 0.2
-inverted = true
-delay = 0.8

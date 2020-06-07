@@ -11,8 +11,6 @@ var is_casting := false
 func _process(delta):
     if is_casting != Input.is_action_pressed(key_power_up):
         laser_beam.is_casting = !is_casting
-        laser_beam_left.is_casting = !is_casting
-        laser_beam_right.is_casting = !is_casting
         is_casting = !is_casting
     if Input.is_action_pressed(key_power_up):
         if Input.is_action_pressed("paddle_one_down") or Input.is_action_pressed("paddle_two_up"):

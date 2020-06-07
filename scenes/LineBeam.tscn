@@ -67,7 +67,7 @@ script = ExtResource( 2 )
 [node name="FillLine2D" type="Line2D" parent="."]
 modulate = Color( 1.5, 1.5, 1.5, 1 )
 points = PoolVector2Array( 0, 0, 300, 0 )
-width = 14.0
+width = 5.0
 default_color = Color( 0.301961, 0.65098, 1, 1 )
 joint_mode = 2
 begin_cap_mode = 2
