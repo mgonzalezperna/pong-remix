@@ -2,14 +2,12 @@ extends RigidBody2D
 
 var rng = RandomNumberGenerator.new()
 var screen_size
-export var key_power_up = "ui_power_up"
-export(float, 0, 1) var paddle_angle_override = 0.5
-export(int, 0, 180) var max_rotation_override = 45
+export(float) var rebound_angle_modifier = 10
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	screen_size = get_viewport_rect().size
+    screen_size = get_viewport_rect().size
 
 # Function to manipulate position safetly without corrupting physics engine.
 func _integrate_forces(state):
@@ -36,29 +34,43 @@ func _physics_process(delta):
                 var arrow_rotation = get_node("../" + body.get_name() + "/arrow").rotation + body.rotation
                 self.linear_velocity = Vector2.UP.rotated(arrow_rotation) * 360
             elif body.position.x != self.position.x:
-                var impulse_x = body.get_velocity().x
-                var impulse_y = body.get_velocity().y
-                self.apply_central_impulse(Vector2(body.get_velocity()))
+                self.linear_velocity = rebound_vector(body)
+            audio_type = "../audio_paddle"
+        var audio: AudioStreamPlayer = get_node(audio_type)
+        #audio.set_pitch_scale(rng.randf_range(0.6, 1.4))
+        #audio.play()
 
-#    var collision = move_and_collide(velocity * delta)
-#    if collision:
-#        velocity = velocity.bounce(collision.normal)
-#        if collision.collider.has_method("hit"):
-#            collision.collider.hit()
+# Modifies the ball's linear_velocity angle based on the current movement 
+# of the paddle in the instant of collition.  
+func rebound_vector(body):
+    var rebound_angle = ball_angle_on_scene(
+        body, atan(self.linear_velocity.y / self.linear_velocity.x))
+    # If paddle has different direction relative to ball, will decrease the 
+    # angle and if the direction is the same, will increase it. To do it, we 
+    # must also bear in mind the angle sign relative to scene.
+    match(body.get_velocity().normalized().y * self.linear_velocity.sign().y):
+        -1.0:
+            rebound_angle -= angle_sign(rebound_angle) * deg2rad(rebound_angle_modifier)
+        1.0:
+            rebound_angle += angle_sign(rebound_angle) * deg2rad(rebound_angle_modifier)
+        _:
+            pass
+    return impulse_vector(self.linear_velocity.length(), rebound_angle)
 
-func _process(delta):
-	var collition_bodies = get_colliding_bodies()
-	for body in collition_bodies:
-		var audio_type = "../audio_wall"
-		if body.get_name() in ["paddle_player1", "paddle_player2"]:
-			# var shape = get_node(NodePath("../" + body.get_name() + "/CollisionShape2D")).get_shape()
-			var paddleOffset = body.get_name() == "paddle_player1" if -40 else 40
-			var hit_vector = (body.position + Vector2(paddleOffset, 0)).direction_to(self.position)
-			var rotation = self.linear_velocity.angle_to(hit_vector) * paddle_angle_override
-			print('rotation ', rad2deg(rotation))
-			rotation = clamp(rotation, -deg2rad(max_rotation_override), deg2rad(max_rotation_override))
-			self.linear_velocity = self.linear_velocity.rotated(rotation)
-			audio_type = "../audio_paddle"
-		var audio: AudioStreamPlayer = get_node(audio_type)
-		audio.set_pitch_scale(rng.randf_range(0.6, 1.4))
-		audio.play()
+func angle_sign(angle):
+    var angle_sign = 1
+    if round(angle) != 0:
+        angle_sign = round(angle)/abs(round(angle))
+    return angle_sign
+
+# Converts angle value from relative to ball to relative to scene.
+func ball_angle_on_scene(body, angle):
+    var angle_on_scene = angle
+    if body.position.x > self.position.x:
+        angle_on_scene += deg2rad(180)
+    return angle_on_scene
+
+# This function is used to modify the resulting collition vector with a 
+func impulse_vector(length, angle):    
+    var impulse_vector = polar2cartesian(length, angle)
+    return impulse_vector
