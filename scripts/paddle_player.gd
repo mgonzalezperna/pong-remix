@@ -22,26 +22,16 @@ func get_velocity():
 func _process(delta):
     var timescale = process_slowmo()
     Engine.time_scale = timescale.engine
-    if not process_powerup():
-        velocity = get_movement_velocity(timescale.paddle)
-    else:
-        pass
-    #position += velocity * delta
-    #position.y = clamp_axis_movement(position)
-    move_and_collide(velocity * delta)
+    velocity = get_movement_velocity(timescale.paddle)
+
+    position += velocity * delta
+    position.y = clamp_axis_movement(position)
 
 func process_slowmo():
     if Input.is_action_pressed(key_slowmo):
          return {"engine": 0.3, "paddle": 2}
 
     return {"engine": 1, "paddle": 1}
-
-func process_powerup():
-#    if Input.is_action_pressed(key_power_up):
-#        arrow.show()
-#    else:
-#        arrow.hide()
-    pass
 
 func get_movement_velocity(timescale):
     var velocity = Vector2()  # The player's movement vector.
