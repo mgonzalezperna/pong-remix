@@ -3,7 +3,7 @@ extends RigidBody2D
 var rng = RandomNumberGenerator.new()
 var screen_size
 export(float) var rebound_angle_modifier = 10
-
+export var key_power_up = "ui_power_up"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -14,17 +14,15 @@ func _integrate_forces(state):
     state.set_angular_velocity(0)
     var ball_state = ball_state_on_screen(state)
     state.set_transform(ball_state)
-	var ball_state = ball_state_on_screen(state)
-	state.set_transform(ball_state)
 
 # If ball left the screen, reapears in the other side.
 func ball_state_on_screen(state):
-	var ball_state = state.get_transform()
-	if ball_state.origin.x > screen_size.x:
-		ball_state.origin.x = 0
-	if ball_state.origin.x < 0:
-		ball_state.origin.x = screen_size.x
-	return ball_state
+    var ball_state = state.get_transform()
+    if ball_state.origin.x > screen_size.x:
+        ball_state.origin.x = 0
+    if ball_state.origin.x < 0: 
+        ball_state.origin.x = screen_size.x
+    return ball_state
 
 func _physics_process(delta):
     var collition_bodies = get_colliding_bodies()
@@ -35,8 +33,8 @@ func _physics_process(delta):
                 self.linear_velocity = Vector2.UP.rotated(arrow_rotation) * 360
             elif body.position.x != self.position.x:
                 self.linear_velocity = rebound_vector(body)
-            audio_type = "../audio_paddle"
-        var audio: AudioStreamPlayer = get_node(audio_type)
+            #audio_type = "../audio_paddle"
+        #var audio: AudioStreamPlayer = get_node(audio_type)
         #audio.set_pitch_scale(rng.randf_range(0.6, 1.4))
         #audio.play()
 
