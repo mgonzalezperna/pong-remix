@@ -23,15 +23,16 @@ func _process(delta):
     var timescale = process_slowmo()
     Engine.time_scale = timescale.engine
     velocity = get_movement_velocity(timescale.paddle)
+    self.get_node("arrow").speed_multiplier = timescale.arrow
 
     position += velocity * delta
     position.y = clamp_axis_movement(position)
 
 func process_slowmo():
     if Input.is_action_pressed(key_slowmo):
-         return {"engine": 0.3, "paddle": 2}
+         return {"engine": 0.3, "paddle": 2, "arrow": 2}
 
-    return {"engine": 1, "paddle": 1}
+    return {"engine": 1, "paddle": 1, "arrow": 1}
 
 func get_movement_velocity(timescale):
     var velocity = Vector2()  # The player's movement vector.
