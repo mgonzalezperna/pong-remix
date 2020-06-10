@@ -9,8 +9,8 @@ onready var laser_beam_right := $ArrowBeamRight
 var is_casting := false
 var inverted := false setget set_inverted
 var speed_multiplier := 1.0
-var arrow_down = "paddle_down"
-var arrow_up = "paddle_up"
+var arrow_down = "paddle_hit_down"
+var arrow_up = "paddle_hit_up"
 
 func set_inverted(_inverted):
     if inverted != _inverted:

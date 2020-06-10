@@ -25,14 +25,15 @@ func _process(delta):
     var timescale = process_slowmo()
     Engine.time_scale = timescale.engine
     
-    if Input.is_action_pressed(paddle_left):
-        position.x = 88
-        rotation = PI / 2
-        $arrow.inverted = false
-    elif Input.is_action_pressed(paddle_right):
-        position.x = 936
-        rotation = - PI / 2
-        $arrow.inverted = true
+    if !Input.is_action_pressed(key_power_up):
+        if Input.is_action_pressed(paddle_left):
+            position.x = 88
+            rotation = PI / 2
+            $arrow.inverted = false
+        elif Input.is_action_pressed(paddle_right):
+            position.x = 936
+            rotation = - PI / 2
+            $arrow.inverted = true
     
     velocity = get_movement_velocity(timescale.paddle)
     $arrow.speed_multiplier = timescale.arrow
