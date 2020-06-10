@@ -1,8 +1,10 @@
 extends KinematicBody2D
 
 export var speed = 400  # How fast the player will move (pixels/sec).
-export var key_up = "ui_up"
-export var key_down = "ui_down"
+var paddle_up = "paddle_up"
+var paddle_down = "paddle_down"
+var paddle_left = "paddle_left"
+var paddle_right = "paddle_right"
 export var key_slowmo = "ui_slowmo"
 export var key_power_up = "ui_power_up"
 var screen_size
@@ -22,8 +24,19 @@ func get_velocity():
 func _process(delta):
     var timescale = process_slowmo()
     Engine.time_scale = timescale.engine
+    
+    if !Input.is_action_pressed(key_power_up):
+        if Input.is_action_pressed(paddle_left):
+            position.x = 88
+            rotation = PI / 2
+            $arrow.inverted = false
+        elif Input.is_action_pressed(paddle_right):
+            position.x = 936
+            rotation = - PI / 2
+            $arrow.inverted = true
+    
     velocity = get_movement_velocity(timescale.paddle)
-    self.get_node("arrow").speed_multiplier = timescale.arrow
+    $arrow.speed_multiplier = timescale.arrow
 
     position += velocity * delta
     position.y = clamp_axis_movement(position)
@@ -39,9 +52,9 @@ func get_movement_velocity(timescale):
     var paddle_speed = speed * timescale
     if Input.is_action_pressed(key_power_up):
         return velocity
-    if Input.is_action_pressed(key_down):
+    if Input.is_action_pressed(paddle_down):
         velocity.y += 1
-    if Input.is_action_pressed(key_up):
+    if Input.is_action_pressed(paddle_up):
         velocity.y -= 1
     if velocity.length() > 0:
         velocity = velocity.normalized() * paddle_speed

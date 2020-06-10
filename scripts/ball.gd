@@ -24,12 +24,12 @@ func ball_state_on_screen(state):
         ball_state.origin.x = screen_size.x
     return ball_state
 
-func _physics_process(delta):
+func _physics_process(_delta):
     var collition_bodies = get_colliding_bodies()
     for body in collition_bodies:
-        if body.get_name() in ["paddle_player1", "paddle_player2"]:
+        if body == $".."/paddle_player:
             if Input.is_action_pressed(key_power_up):
-                var arrow_rotation = get_node("../" + body.get_name() + "/arrow").rotation + body.rotation
+                var arrow_rotation = $".."/paddle_player/arrow.rotation + body.rotation
                 self.linear_velocity = Vector2.UP.rotated(arrow_rotation) * 360
             elif body.position.x != self.position.x:
                 self.linear_velocity = rebound_vector(body)

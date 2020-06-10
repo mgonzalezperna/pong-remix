@@ -47,50 +47,29 @@ glow_bicubic_upscale = true
 [node name="scene-base" type="Node2D"]
 script = SubResource( 1 )
 
-[node name="paddle_player1" type="KinematicBody2D" parent="."]
+[node name="paddle_player" type="KinematicBody2D" parent="."]
 position = Vector2( 88, 296 )
 rotation = 1.5708
 scale = Vector2( 0.5, 0.5 )
 collision_mask = 6
 script = ExtResource( 3 )
-key_up = "paddle_one_up"
-key_down = "paddle_one_down"
 
-[node name="Sprite" type="Sprite" parent="paddle_player1"]
+[node name="Sprite" type="Sprite" parent="paddle_player"]
 texture = ExtResource( 1 )
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="paddle_player1"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="paddle_player"]
 shape = SubResource( 2 )
 one_way_collision = true
 
-[node name="Area2D" type="Area2D" parent="paddle_player1"]
+[node name="Area2D" type="Area2D" parent="paddle_player"]
 position = Vector2( 6.10352e-05, 16 )
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="paddle_player1/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="paddle_player/Area2D"]
 position = Vector2( 6.10352e-05, 16 )
 shape = SubResource( 3 )
 
-[node name="arrow" parent="paddle_player1" instance=ExtResource( 6 )]
-visible = false
-
-[node name="paddle_player2" type="KinematicBody2D" parent="."]
-position = Vector2( 936, 296 )
-rotation = -1.5708
-scale = Vector2( 0.5, 0.5 )
-collision_mask = 6
-script = ExtResource( 3 )
-key_up = "paddle_two_up"
-key_down = "paddle_two_down"
-
-[node name="Sprite" type="Sprite" parent="paddle_player2"]
-texture = ExtResource( 1 )
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="paddle_player2"]
-shape = SubResource( 2 )
-one_way_collision = true
-
-[node name="arrow" parent="paddle_player2" instance=ExtResource( 6 )]
+[node name="arrow" parent="paddle_player" instance=ExtResource( 6 )]
 visible = false
 
 [node name="ball" type="RigidBody2D" parent="."]
