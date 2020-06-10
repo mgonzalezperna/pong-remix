@@ -1,9 +1,10 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://assets/sprites/paddle.png" type="Texture" id=1]
 [ext_resource path="res://assets/sprites/ball.png" type="Texture" id=2]
 [ext_resource path="res://scripts/paddle_player.gd" type="Script" id=3]
 [ext_resource path="res://scripts/ball.gd" type="Script" id=4]
+[ext_resource path="res://scripts/Particles2D.gd" type="Script" id=5]
 [ext_resource path="res://scenes/arrow.tscn" type="PackedScene" id=6]
 
 [sub_resource type="GDScript" id=1]
@@ -125,7 +126,7 @@ lifetime = 0.5
 randomness = 0.3
 local_coords = false
 process_material = SubResource( 6 )
-script = SubResource( 1 )
+script = ExtResource( 5 )
 
 [node name="up_wall" type="StaticBody2D" parent="."]
 collision_mask = 2
