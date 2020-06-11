@@ -11,6 +11,7 @@ var screen_size
 var velocity
 
 onready var arrow = $arrow
+onready var power_up_area = $power_up_area
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

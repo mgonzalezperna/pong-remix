@@ -3,8 +3,6 @@ extends Node2D
 export var key_power_up = "ui_power_up"
 
 onready var laser_beam := $ArrowBeam
-onready var laser_beam_left := $ArrowBeamLeft
-onready var laser_beam_right := $ArrowBeamRight
 
 var is_casting := false
 var inverted := false setget set_inverted
