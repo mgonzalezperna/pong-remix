@@ -12,8 +12,9 @@
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 80, 8 )
 
-[sub_resource type="RectangleShape2D" id=3]
-extents = Vector2( 64, 32.0002 )
+[sub_resource type="CapsuleShape2D" id=3]
+radius = 130.0
+height = 140.0
 
 [sub_resource type="PhysicsMaterial" id=4]
 friction = 0.0
@@ -61,16 +62,14 @@ texture = ExtResource( 1 )
 shape = SubResource( 2 )
 one_way_collision = true
 
-[node name="Area2D" type="Area2D" parent="paddle_player"]
-position = Vector2( 6.10352e-05, 16 )
-collision_mask = 2
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="paddle_player/Area2D"]
-position = Vector2( 6.10352e-05, 16 )
-shape = SubResource( 3 )
-
 [node name="arrow" parent="paddle_player" instance=ExtResource( 6 )]
 visible = false
+
+[node name="power_up_area" type="Area2D" parent="paddle_player"]
+
+[node name="PowerUpZone" type="CollisionShape2D" parent="paddle_player/power_up_area"]
+position = Vector2( 0, 60 )
+shape = SubResource( 3 )
 
 [node name="ball" type="RigidBody2D" parent="."]
 position = Vector2( 96, 296 )
