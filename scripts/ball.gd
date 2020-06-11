@@ -35,14 +35,17 @@ func _physics_process(_delta):
             self.global_position.distance_to(paddle.global_position)-55))
         var shoot_velocity = paddle.speed + 10 * velocity_multiplier
         self.linear_velocity = Vector2.UP.rotated(arrow_rotation) * shoot_velocity
+        #The fixed speed on the function overlaps with the speed of the powerup!
+        #goToClosestEnemyInAngle()
     else:
         var collition_bodies = get_colliding_bodies()
         for body in collition_bodies:
             if body == paddle:
                 self.linear_velocity = rebound_vector(body)
+                goToClosestEnemyInAngle()
             elif body in enemies.get_children():
-            enemies.remove_child(body)
-            goToClosestEnemyInAngle()
+                enemies.remove_child(body)
+            
 
 func goToClosestEnemyInAngle():
     var closest
