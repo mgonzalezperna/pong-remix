@@ -4,7 +4,7 @@ var rng = RandomNumberGenerator.new()
 var screen_size
 export(float) var rebound_angle_modifier = 10
 export var key_power_up = "ui_power_up"
-
+onready var enemies = $".."/Enemies
 # Called when the node enters the scene tree for the first time.
 func _ready():
     screen_size = get_viewport_rect().size
@@ -26,6 +26,7 @@ func ball_state_on_screen(state):
 
 func _physics_process(_delta):
     var collition_bodies = get_colliding_bodies()
+
     for body in collition_bodies:
         if body == $".."/paddle_player:
             if Input.is_action_pressed(key_power_up):
@@ -33,11 +34,27 @@ func _physics_process(_delta):
                 self.linear_velocity = Vector2.UP.rotated(arrow_rotation) * 360
             elif body.position.x != self.position.x:
                 self.linear_velocity = rebound_vector(body)
+            goToClosestEnemyInAngle()
+        elif body in enemies.get_children():
+            enemies.remove_child(body)
+            goToClosestEnemyInAngle()
             #audio_type = "../audio_paddle"
         #var audio: AudioStreamPlayer = get_node(audio_type)
         #audio.set_pitch_scale(rng.randf_range(0.6, 1.4))
         #audio.play()
+   
 
+func goToClosestEnemyInAngle():
+    var closest
+    for enemy in enemies.get_children():
+        var enemy_direction = enemy.global_position - self.position
+        var angle = self.linear_velocity.angle_to(enemy_direction)
+        var distance = enemy_direction.length()
+        if abs(angle) < PI/4 and (not closest or closest.distance > distance):
+            closest = {'distance': distance, 'direction': enemy_direction}
+    if closest:
+        self.linear_velocity = closest.direction.normalized() * 200
+    
 # Modifies the ball's linear_velocity angle based on the current movement 
 # of the paddle in the instant of collition.  
 func rebound_vector(body):
