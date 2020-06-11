@@ -25,18 +25,21 @@ func ball_state_on_screen(state):
     return ball_state
 
 func _physics_process(_delta):
-    var collition_bodies = get_colliding_bodies()
-    for body in collition_bodies:
-        if body == $".."/paddle_player:
-            if Input.is_action_pressed(key_power_up):
-                var arrow_rotation = $".."/paddle_player/arrow.rotation + body.rotation
-                self.linear_velocity = Vector2.UP.rotated(arrow_rotation) * 360
-            elif body.position.x != self.position.x:
+    var paddle = $".."/paddle_player
+    var ball_in_power_up_zone = paddle.power_up_area.overlaps_body(self)
+    if ball_in_power_up_zone and Input.is_action_pressed(key_power_up):
+        var arrow_rotation = paddle.arrow.rotation + paddle.rotation
+        # The function y = 1/(1.1) ^ (x - 55) describes the relation that
+        # transforms the shooting speed.
+        var velocity_multiplier = pow(1/1.1, int(
+            self.global_position.distance_to(paddle.global_position)-55))
+        var shoot_velocity = paddle.speed + 10 * velocity_multiplier
+        self.linear_velocity = Vector2.UP.rotated(arrow_rotation) * shoot_velocity
+    else:
+        var collition_bodies = get_colliding_bodies()
+        for body in collition_bodies:
+            if body == paddle:
                 self.linear_velocity = rebound_vector(body)
-            #audio_type = "../audio_paddle"
-        #var audio: AudioStreamPlayer = get_node(audio_type)
-        #audio.set_pitch_scale(rng.randf_range(0.6, 1.4))
-        #audio.play()
 
 # Modifies the ball's linear_velocity angle based on the current movement 
 # of the paddle in the instant of collition.  
