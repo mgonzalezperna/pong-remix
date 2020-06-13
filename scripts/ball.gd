@@ -2,7 +2,9 @@ extends RigidBody2D
 
 var rng = RandomNumberGenerator.new()
 var screen_size
-export(float) var rebound_angle_modifier = 10
+export(int, 0, 90 ) var rebound_angle_modifier = 10
+export(int, 0, 90 ) var angle_clamp = 30
+
 export var key_power_up = "ui_power_up"
 onready var enemies = $".."/Enemies
 # Called when the node enters the scene tree for the first time.
@@ -32,22 +34,23 @@ func _physics_process(_delta):
         # The function y = 1/(1.1) ^ (x - 55) describes the relation that
         # transforms the shooting speed.
         var velocity_multiplier = pow(1/1.1, int(
-            self.global_position.distance_to(paddle.global_position)-55))
+            self.global_position.distance_to(paddle.global_position) - 55))
         var shoot_velocity = paddle.speed + 10 * velocity_multiplier
         self.linear_velocity = Vector2.UP.rotated(arrow_rotation) * shoot_velocity
         #The fixed speed on the function overlaps with the speed of the powerup!
-        #goToClosestEnemyInAngle()
+        go_to_closest_enemy_in_angle()
     else:
         var collition_bodies = get_colliding_bodies()
         for body in collition_bodies:
             if body == paddle:
                 self.linear_velocity = rebound_vector(body)
-                goToClosestEnemyInAngle()
+                go_to_closest_enemy_in_angle()
             elif body in enemies.get_children():
                 enemies.remove_child(body)
-            
+        if not collition_bodies.empty():
+            clamp_angle()
 
-func goToClosestEnemyInAngle():
+func go_to_closest_enemy_in_angle():
     var closest
     for enemy in enemies.get_children():
         var enemy_direction = enemy.global_position - self.position
@@ -56,39 +59,23 @@ func goToClosestEnemyInAngle():
         if abs(angle) < PI/4 and (not closest or closest.distance > distance):
             closest = {'distance': distance, 'direction': enemy_direction}
     if closest:
-        self.linear_velocity = closest.direction.normalized() * 200
+        self.linear_velocity = closest.direction.normalized() * self.linear_velocity.length()
     
 # Modifies the ball's linear_velocity angle based on the current movement 
 # of the paddle in the instant of collition.  
 func rebound_vector(body):
-    var rebound_angle = ball_angle_on_scene(
-        body, atan(self.linear_velocity.y / self.linear_velocity.x))
     # If paddle has different direction relative to ball, will decrease the 
     # angle and if the direction is the same, will increase it. To do it, we 
     # must also bear in mind the angle sign relative to scene.
-    match(body.get_velocity().normalized().y * self.linear_velocity.sign().y):
-        -1.0:
-            rebound_angle -= angle_sign(rebound_angle) * deg2rad(rebound_angle_modifier)
-        1.0:
-            rebound_angle += angle_sign(rebound_angle) * deg2rad(rebound_angle_modifier)
-        _:
-            pass
-    return impulse_vector(self.linear_velocity.length(), rebound_angle)
+    var sign_rotation = body.get_velocity().normalized().y * self.linear_velocity.sign().x
+    return self.linear_velocity.rotated(deg2rad(rebound_angle_modifier) * sign_rotation)
 
-func angle_sign(angle):
-    var angle_sign = 1
-    if round(angle) != 0:
-        angle_sign = round(angle)/abs(round(angle))
-    return angle_sign
-
-# Converts angle value from relative to ball to relative to scene.
-func ball_angle_on_scene(body, angle):
-    var angle_on_scene = angle
-    if body.position.x > self.position.x:
-        angle_on_scene += deg2rad(180)
-    return angle_on_scene
-
-# This function is used to modify the resulting collition vector with a 
-func impulse_vector(length, angle):    
-    var impulse_vector = polar2cartesian(length, angle)
-    return impulse_vector
+func clamp_angle():
+    var min_angle = deg2rad(angle_clamp)
+    var down_angle = Vector2.DOWN.angle_to(self.linear_velocity)
+    var up_angle = Vector2.UP.angle_to(self.linear_velocity)
+    
+    if abs(up_angle) <= min_angle:
+        self.linear_velocity = Vector2.UP.rotated(min_angle * sign(up_angle)) * self.linear_velocity.length()
+    elif abs(down_angle) <= min_angle:
+        self.linear_velocity = Vector2.DOWN.rotated(min_angle * sign(down_angle)) * self.linear_velocity.length()
