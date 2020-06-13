@@ -112,6 +112,8 @@ script = ExtResource( 5 )
 position = Vector2( 521.451, 301.18 )
 script = ExtResource( 7 )
 EnemyScene = ExtResource( 8 )
+count_min = 1
+count_max = 5
 spawn_radius = 300.0
 
 [node name="up_wall" type="StaticBody2D" parent="."]
