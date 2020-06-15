@@ -17,8 +17,8 @@
 extents = Vector2( 80, 8 )
 
 [sub_resource type="CapsuleShape2D" id=3]
-radius = 130.0
-height = 140.0
+radius = 160.0
+height = 100.0
 
 [sub_resource type="PhysicsMaterial" id=4]
 friction = 0.0
@@ -94,9 +94,12 @@ visible = false
 [node name="power_up_area" type="Area2D" parent="paddle_player"]
 
 [node name="PowerUpZone" type="CollisionShape2D" parent="paddle_player/power_up_area"]
-visible = false
-position = Vector2( 0, 60 )
+position = Vector2( 0, 40 )
+rotation = 1.5708
 shape = SubResource( 3 )
+
+[node name="Timer" type="Timer" parent="paddle_player"]
+one_shot = true
 
 [node name="ball" type="RigidBody2D" parent="."]
 position = Vector2( 96, 296 )
@@ -177,3 +180,5 @@ process_mode = 0
 smoothing_enabled = true
 script = ExtResource( 9 )
 [connection signal="on_wall_hit" from="ball" to="Camera" method="_on_wall_hit"]
+[connection signal="body_entered" from="paddle_player/power_up_area" to="ball" method="_on_power_up_area_body_entered"]
+[connection signal="timeout" from="paddle_player/Timer" to="ball" method="_on_Timer_timeout"]
