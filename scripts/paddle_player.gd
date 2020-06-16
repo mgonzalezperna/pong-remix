@@ -22,7 +22,7 @@ func get_velocity():
     return velocity
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _physics_process(delta):
     var timescale = process_slowmo()
     Engine.time_scale = timescale.engine
     

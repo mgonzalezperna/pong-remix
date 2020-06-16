@@ -5,8 +5,11 @@ var screen_size
 export(int, 0, 90 ) var rebound_angle_modifier = 10
 export(int, 0, 90 ) var angle_clamp = 30
 
+signal on_wall_hit
+
 export var key_power_up = "ui_power_up"
 onready var enemies = $".."/Enemies
+onready var ripple = $RippleEmitter
 # Called when the node enters the scene tree for the first time.
 func _ready():
     screen_size = get_viewport_rect().size
@@ -45,10 +48,10 @@ func _physics_process(_delta):
             if body == paddle:
                 self.linear_velocity = rebound_vector(body)
                 go_to_closest_enemy_in_angle()
-            elif body in enemies.get_children():
-                enemies.remove_child(body)
         if not collition_bodies.empty():
             clamp_angle()
+            hit_effect()
+            
 
 func go_to_closest_enemy_in_angle():
     var closest
@@ -68,7 +71,8 @@ func rebound_vector(body):
     # angle and if the direction is the same, will increase it. To do it, we 
     # must also bear in mind the angle sign relative to scene.
     var sign_rotation = body.get_velocity().normalized().y * self.linear_velocity.sign().x
-    return self.linear_velocity.rotated(deg2rad(rebound_angle_modifier) * sign_rotation)
+    var velocity = clamp(self.linear_velocity.length(), 400, 2000)
+    return self.linear_velocity.rotated(deg2rad(rebound_angle_modifier) * sign_rotation).normalized() * velocity
 
 func clamp_angle():
     var min_angle = deg2rad(angle_clamp)
@@ -79,3 +83,8 @@ func clamp_angle():
         self.linear_velocity = Vector2.UP.rotated(min_angle * sign(up_angle)) * self.linear_velocity.length()
     elif abs(down_angle) <= min_angle:
         self.linear_velocity = Vector2.DOWN.rotated(min_angle * sign(down_angle)) * self.linear_velocity.length()
+        
+func hit_effect():
+    emit_signal("on_wall_hit")
+    ripple.emitting = true
+    ripple.restart()
