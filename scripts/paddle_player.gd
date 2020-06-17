@@ -11,7 +11,8 @@ var screen_size
 var velocity
 
 onready var arrow = $arrow
-onready var power_up_area = $power_up_area
+onready var timer = $power_up_timer
+onready var power_up_on = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -26,7 +27,7 @@ func _physics_process(delta):
     var timescale = process_slowmo()
     Engine.time_scale = timescale.engine
     
-    if !Input.is_action_pressed(key_power_up):
+    if not power_up_on:
         if Input.is_action_pressed(paddle_left):
             position.x = 88
             rotation = PI / 2
@@ -35,10 +36,10 @@ func _physics_process(delta):
             position.x = 936
             rotation = - PI / 2
             $arrow.inverted = true
-    
+
     velocity = get_movement_velocity(timescale.paddle)
     $arrow.speed_multiplier = timescale.arrow
-
+    $arrow.laser_beam.scale.x = (timer.wait_time - timer.time_left)
     position += velocity * delta
     position.y = clamp_axis_movement(position)
 
