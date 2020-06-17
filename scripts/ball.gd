@@ -38,7 +38,6 @@ func shoot_ball():
     var time_elapsed = paddle.timer.wait_time - paddle.timer.time_left
     var power = (power_coef * time_elapsed) if (power_coef * time_elapsed > 1) else 1
     self.linear_velocity = Vector2.UP.rotated(arrow_rotation) * shoot_velocity * power
-    go_to_closest_enemy_in_angle()
 
 # If ball left the screen, reapears in the other side.
 func ball_on_screen(state):
@@ -52,12 +51,9 @@ func ball_on_screen(state):
 func _physics_process(_delta):
     var collition_bodies = get_colliding_bodies()
     for body in collition_bodies:
-        if body == paddle:
-            if paddle.power_up_on:
-                self.linear_velocity = Vector2(0,0)
-            else:
-                self.linear_velocity = rebound_vector(body)
-                go_to_closest_enemy_in_angle()
+        if body == paddle and not paddle.power_up_on:
+            self.linear_velocity = rebound_vector(body)
+            go_to_closest_enemy_in_angle()
         elif body in enemies.get_children():
             enemies.remove_child(body)
     if not collition_bodies.empty():
@@ -103,10 +99,9 @@ func hit_effect():
 func _on_power_up_area_body_entered(body):
     if Input.is_action_pressed(key_power_up):
         paddle.power_up_on = true
-        #self.linear_velocity = (paddle.global_position-self.position).normalized() * 400
         paddle.timer.start()
         arrow_rotation = paddle.arrow.rotation + paddle.rotation
 
-func _on_Timer_timeout():
+func _on_power_up_timer_timeout():
     shoot_ball()
     paddle.power_up_on = false
