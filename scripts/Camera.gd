@@ -32,7 +32,6 @@ func _physics_process(delta):
 
 func shake():
     var amount := pow(shake_amount, SHAKE_EXPONENT)
-
     noise_y += 1.0
     rotation = max_rotation * amount * noise.get_noise_2d(noise.seed, noise_y)
     offset = Vector2(
@@ -46,7 +45,7 @@ func set_shake_amount(value):
     set_physics_process(shake_amount != 0.0)
     
 func _on_wall_hit() -> void:
-    self.shake_amount += 0.25
+    self.shake_amount += 2
 
 func _on_Events_explosion_occurred() -> void:
     self.shake_amount += 0.6
