@@ -11,7 +11,6 @@ var screen_size
 var velocity
 
 onready var arrow = $arrow
-onready var power_up_area = $power_up_area
 onready var timer = $power_up_timer
 onready var power_up_on = false
 
@@ -28,7 +27,7 @@ func _physics_process(delta):
     var timescale = process_slowmo()
     Engine.time_scale = timescale.engine
     
-    if !Input.is_action_pressed(key_power_up):
+    if not power_up_on:
         if Input.is_action_pressed(paddle_left):
             position.x = 88
             rotation = PI / 2
