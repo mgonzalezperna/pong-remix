@@ -9,8 +9,8 @@ signal on_wall_hit
 
 export var key_power_up = "ui_power_up"
 
-export (int) var shoot_velocity = 400
-export (int) var power_up_increment = 10
+export (int) var shoot_velocity = 200
+export (int) var power_coef = 10
 var arrow_rotation
 
 onready var enemies = $".."/Enemies
@@ -23,12 +23,25 @@ func _ready():
 
 # Function to manipulate position safetly without corrupting physics engine.
 func _integrate_forces(state):
-    state.set_angular_velocity(0)
-    var ball_state = ball_state_on_screen(state)
+    var ball_state = ball_on_screen(state)
+    if paddle.power_up_on:
+        if Input.is_action_pressed(key_power_up):
+            ball_state.origin = paddle.global_position
+            self.linear_velocity = Vector2(0,0)
+        else:
+            shoot_ball()
+            paddle.timer.stop()
+            paddle.power_up_on = false
     state.set_transform(ball_state)
 
+func shoot_ball():
+    var time_elapsed = paddle.timer.wait_time - paddle.timer.time_left
+    var power = (power_coef * time_elapsed) if (power_coef * time_elapsed > 1) else 1
+    self.linear_velocity = Vector2.UP.rotated(arrow_rotation) * shoot_velocity * power
+    go_to_closest_enemy_in_angle()
+
 # If ball left the screen, reapears in the other side.
-func ball_state_on_screen(state):
+func ball_on_screen(state):
     var ball_state = state.get_transform()
     if ball_state.origin.x > screen_size.x:
         ball_state.origin.x = 0
@@ -40,8 +53,13 @@ func _physics_process(_delta):
     var collition_bodies = get_colliding_bodies()
     for body in collition_bodies:
         if body == paddle:
-            self.linear_velocity = rebound_vector(body)
-            go_to_closest_enemy_in_angle()
+            if paddle.power_up_on:
+                self.linear_velocity = Vector2(0,0)
+            else:
+                self.linear_velocity = rebound_vector(body)
+                go_to_closest_enemy_in_angle()
+        elif body in enemies.get_children():
+            enemies.remove_child(body)
     if not collition_bodies.empty():
         clamp_angle()
         hit_effect()
@@ -84,10 +102,11 @@ func hit_effect():
 
 func _on_power_up_area_body_entered(body):
     if Input.is_action_pressed(key_power_up):
-        self.linear_velocity = Vector2(0,0)
-        paddle.get_node('Timer').start()
+        paddle.power_up_on = true
+        #self.linear_velocity = (paddle.global_position-self.position).normalized() * 400
+        paddle.timer.start()
         arrow_rotation = paddle.arrow.rotation + paddle.rotation
 
 func _on_Timer_timeout():
-    self.linear_velocity = Vector2.UP.rotated(arrow_rotation) * shoot_velocity
-    go_to_closest_enemy_in_angle()
+    shoot_ball()
+    paddle.power_up_on = false
