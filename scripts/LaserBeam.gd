@@ -1,7 +1,7 @@
 extends Node2D
 
 export var cast_speed := 1.0
-export var max_length := 300
+export var max_length := 150
 export var growth_time := 0.1
 export var inverted := false
 export var delay := 0.0

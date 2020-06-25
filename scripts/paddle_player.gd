@@ -13,6 +13,7 @@ var velocity
 onready var arrow = $arrow
 onready var timer = $power_up_timer
 onready var power_up_on = false
+onready var ball = $".."/ball
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -25,7 +26,15 @@ func get_velocity():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
     var timescale = process_slowmo()
+    
     Engine.time_scale = timescale.engine
+    var minDistance = [
+        50 if sign(ball.linear_velocity.x) != sign(position.x - ball.position.x) or ball.position.x < 88 or ball.position.x > 936 else abs(position.x - ball.position.x),
+        50 if ball.linear_velocity.y > 0 else ball.position.y,
+        50 if ball.linear_velocity.y < 0 else 600 - ball.position.y
+    ].min()
+    if minDistance < 50:
+        Engine.time_scale = timescale.engine * 0.3
     
     if not power_up_on:
         if Input.is_action_pressed(paddle_left):
@@ -46,7 +55,7 @@ func _physics_process(delta):
 func process_slowmo():
     if Input.is_action_pressed(key_slowmo):
          return {"engine": 0.3, "paddle": 2, "arrow": 2}
-
+    
     return {"engine": 1, "paddle": 1, "arrow": 1}
 
 func get_movement_velocity(timescale):

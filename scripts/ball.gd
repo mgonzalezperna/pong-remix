@@ -27,11 +27,12 @@ func _integrate_forces(state):
     if paddle.power_up_on:
         if Input.is_action_pressed(key_power_up):
             ball_state.origin = paddle.global_position
-            self.linear_velocity = Vector2(0,0)
+            state.linear_velocity = Vector2(0,0)
         else:
             shoot_ball()
             paddle.timer.stop()
             paddle.power_up_on = false
+    state.linear_velocity = state.linear_velocity.clamped(2000)
     state.set_transform(ball_state)
 
 func shoot_ball():
@@ -53,7 +54,7 @@ func _physics_process(_delta):
     for body in collition_bodies:
         if body == paddle and not paddle.power_up_on:
             self.linear_velocity = rebound_vector(body)
-            go_to_closest_enemy_in_angle()
+            #go_to_closest_enemy_in_angle()
         elif body in enemies.get_children():
             enemies.remove_child(body)
     if not collition_bodies.empty():
@@ -66,7 +67,7 @@ func go_to_closest_enemy_in_angle():
         var enemy_direction = enemy.global_position - self.position
         var angle = self.linear_velocity.angle_to(enemy_direction)
         var distance = enemy_direction.length()
-        if abs(angle) < PI/4 and (not closest or closest.distance > distance):
+        if abs(angle) < PI/6 and (not closest or closest.distance > distance):
             closest = {'distance': distance, 'direction': enemy_direction}
     if closest:
         self.linear_velocity = closest.direction.normalized() * self.linear_velocity.length()
@@ -95,7 +96,7 @@ func hit_effect():
     emit_signal("on_wall_hit")
     ripple.emitting = true
     ripple.restart()
-
+    
 func _on_power_up_area_body_entered(body):
     if Input.is_action_pressed(key_power_up):
         paddle.power_up_on = true

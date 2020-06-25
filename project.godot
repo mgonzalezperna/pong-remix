@@ -97,6 +97,7 @@ paddle_hit_right={
 
 [physics]
 
+2d/thread_model=2
 2d/default_gravity=0
 
 [rendering]
