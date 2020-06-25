@@ -183,8 +183,13 @@ current = true
 process_mode = 0
 smoothing_enabled = true
 script = ExtResource( 9 )
+[connection signal="on_power_up_charging" from="paddle_player" to="Camera" method="_on_paddle_player_on_power_up_charging"]
+[connection signal="power_up_activated" from="paddle_player" to="ball" method="_on_paddle_player_power_up_activated"]
+[connection signal="power_up_released" from="paddle_player" to="ball" method="_on_paddle_player_power_up_released"]
 [connection signal="body_entered" from="paddle_player/power_up_area" to="ball" method="_on_power_up_area_body_entered"]
+[connection signal="body_entered" from="paddle_player/power_up_area" to="paddle_player" method="_on_power_up_area_body_entered"]
 [connection signal="body_exited" from="paddle_player/power_up_area" to="ball" method="_on_power_up_area_body_exited"]
+[connection signal="body_exited" from="paddle_player/power_up_area" to="paddle_player" method="_on_power_up_area_body_exited"]
 [connection signal="timeout" from="paddle_player/power_up_timer" to="ball" method="_on_power_up_timer_timeout"]
 [connection signal="on_wall_hit" from="ball" to="Camera" method="_on_wall_hit"]
 [connection signal="body_entered" from="Enemies/Enemy" to="Enemies/Enemy" method="_on_Enemy_body_entered"]
