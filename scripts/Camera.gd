@@ -45,7 +45,10 @@ func set_shake_amount(value):
     set_physics_process(shake_amount != 0.0)
     
 func _on_wall_hit() -> void:
-    self.shake_amount += 2
+    self.shake_amount += 0.5
 
 func _on_Events_explosion_occurred() -> void:
     self.shake_amount += 0.6
+
+func _on_paddle_player_on_power_up_charging(power_up_load):
+    self.shake_amount = power_up_load
