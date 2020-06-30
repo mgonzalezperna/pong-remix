@@ -8,4 +8,5 @@ script = ExtResource( 2 )
 
 [node name="ArrowBeam" parent="." instance=ExtResource( 3 )]
 cast_speed = 0.1
+max_length = 400
 growth_time = 0.2
